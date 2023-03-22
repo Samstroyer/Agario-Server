@@ -8,6 +8,6 @@ public class SnakeProperties
     [JsonPropertyName("y"), JsonInclude]
     public float Y { get; set; }
 
-    [JsonPropertyName("pointsArr"), JsonInclude]
-    public (int x, int y)[] PreviousPointsArray { get; set; }
+    [JsonPropertyName("body"), JsonInclude]
+    public List<(int X, int Y)> Body { get; set; }
 }

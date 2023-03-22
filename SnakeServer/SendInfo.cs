@@ -8,5 +8,5 @@ public class SendInfo
     [JsonInclude]
     public string Content { get; set; }
     [JsonInclude]
-    private string ID { get; set; }
+    public string ID { get; set; }
 }

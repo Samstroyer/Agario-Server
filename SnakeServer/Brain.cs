@@ -8,13 +8,22 @@ public class Brain
 
     WebSocketServer wssv;
 
+    public static List<Food> foodPoints = new();
+
     public Brain()
     {
-        string ip = Console.ReadLine();
-        Console.WriteLine("Attempting to open on: ws://" + ip + ":3000");
+        // string ip = Console.ReadLine();
+        // Console.WriteLine("Attempting to open on: ws://" + ip + ":3000");
+        // wssv = new("ws://" + ip + ":3000");
 
-        wssv = new("ws://" + ip + ":3000");
-        wssv.AddWebSocketService<Trafficker>("");
+        wssv = new("ws://192.168.10.240:3000");
+        Console.WriteLine("Opening on " + wssv.Address);
+        wssv.AddWebSocketService<Trafficker>("/snake");
+
+        for (int i = 0; i < 500; i++)
+        {
+            foodPoints.Add(new());
+        }
 
         wssv.Start();
     }
