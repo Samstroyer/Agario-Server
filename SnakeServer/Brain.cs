@@ -16,11 +16,11 @@ public class Brain
         // Console.WriteLine("Attempting to open on: ws://" + ip + ":3000");
         // wssv = new("ws://" + ip + ":3000");
 
-        wssv = new("ws://192.168.10.240:3000");
+        wssv = new("ws://192.168.10.177:3000");
         Console.WriteLine("Opening on " + wssv.Address);
         wssv.AddWebSocketService<Trafficker>("/snake");
 
-        for (int i = 0; i < 500; i++)
+        for (int i = 0; i < 50; i++)
         {
             foodPoints.Add(new());
         }

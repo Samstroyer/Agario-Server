@@ -10,7 +10,7 @@ public class Trafficker : WebSocketBehavior
 
         string packet = JsonSerializer.Serialize<SendInfo>(new()
         {
-            MessageType = "FoodUpdate",
+            MessageType = "InitFood",
             Content = foodJson
         });
 
@@ -26,14 +26,13 @@ public class Trafficker : WebSocketBehavior
         string type = packet.MessageType;
         string content = packet.Content;
 
-        Console.WriteLine(content);
-
         switch (type)
         {
-            case "ateFood":
-                // Fix new food and remove old
+            case "ate":
+                // Well, the food handler is called chef sometimes
+                Chef(content);
                 break;
-            case "updatePosition":
+            case "position":
                 string pcID = packet.ID;
 
                 if (Brain.playerDict.ContainsKey(pcID))
@@ -50,5 +49,35 @@ public class Trafficker : WebSocketBehavior
                 Console.WriteLine("Content: " + packet.Content);
                 break;
         }
+    }
+
+    private void Chef(string content)
+    {
+        List<FoodUpdate> newFood = new();
+
+        List<int> eatenIndexList = JsonSerializer.Deserialize<List<int>>(content);
+        foreach (int i in eatenIndexList)
+        {
+            Brain.foodPoints[i] = new();
+
+            FoodUpdate f = new()
+            {
+                Food = Brain.foodPoints[i],
+                Index = i
+            };
+            newFood.Add(f);
+        }
+
+        string newFoodJson = JsonSerializer.Serialize<List<FoodUpdate>>(newFood);
+        string foodUpdate = JsonSerializer.Serialize<SendInfo>(new()
+        {
+            MessageType = "FoodUpdate",
+            Content = newFoodJson
+        });
+
+        Sessions.Broadcast(foodUpdate);
+        Console.WriteLine("Updated foodpoints: " + foodUpdate);
+
+        // Console.WriteLine("Updated foodpoints to clients!");
     }
 }
