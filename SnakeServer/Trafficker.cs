@@ -20,7 +20,7 @@ public class Trafficker : WebSocketBehavior
 
         string packet = JsonSerializer.Serialize<SendInfo>(new()
         {
-            MessageType = "InitFood",
+            MessageType = MessageType.GetFood,
             Content = foodJson
         });
 
@@ -33,30 +33,43 @@ public class Trafficker : WebSocketBehavior
     {
         SendInfo packet = JsonSerializer.Deserialize<SendInfo>(e.Data);
 
-        string type = packet.MessageType;
         string content = packet.Content;
 
-        switch (type)
+        switch (packet.MessageType)
         {
-            case "ate":
+            case MessageType.Food:
                 Chef(content);
                 break;
 
-            case "position":
+            case MessageType.Position:
                 string pcID = packet.ID;
 
                 while (Brain.listLock) ;
                 Brain.listLock = true;
                 if (Brain.playerDict.ContainsKey(pcID))
                 {
-                    Brain.playerDict[pcID] = JsonSerializer.Deserialize<SnakeProperties>(content);
+                    Brain.playerDict[pcID] = JsonSerializer.Deserialize<PlayerProperties>(content);
                 }
                 else
                 {
-                    Brain.playerDict.Add(pcID, JsonSerializer.Deserialize<SnakeProperties>(content));
+                    Brain.playerDict.Add(pcID, JsonSerializer.Deserialize<PlayerProperties>(content));
                 }
                 Brain.listLock = false;
                 Console.WriteLine("Player {0} at X:{1}, Y:{2}, Size:{3}", pcID, Brain.playerDict[pcID].X, Brain.playerDict[pcID].Y, Brain.playerDict[pcID].Size);
+                break;
+
+            case MessageType.Close:
+                string removeID = packet.ID;
+
+                while (Brain.listLock) ;
+                Brain.listLock = true;
+                if (Brain.playerDict.ContainsKey(removeID))
+                {
+                    Brain.playerDict.Remove(removeID);
+                    Console.WriteLine("Removed {0} from player dictionary!", removeID);
+                }
+                else Console.WriteLine("Failed to find {0} to remove!", removeID);
+                Brain.listLock = false;
                 break;
 
             default:
@@ -86,7 +99,7 @@ public class Trafficker : WebSocketBehavior
         string newFoodJson = JsonSerializer.Serialize<List<FoodUpdate>>(newFood);
         string foodUpdate = JsonSerializer.Serialize<SendInfo>(new()
         {
-            MessageType = "FoodUpdate",
+            MessageType = MessageType.Food,
             Content = newFoodJson
         });
 
@@ -99,10 +112,10 @@ public class Trafficker : WebSocketBehavior
         while (Brain.listLock) ;
         Brain.listLock = true;
 
-        string otherPlayers = JsonSerializer.Serialize<Dictionary<string, SnakeProperties>>(Brain.playerDict);
+        string otherPlayers = JsonSerializer.Serialize<Dictionary<string, PlayerProperties>>(Brain.playerDict);
         string playerUpdate = JsonSerializer.Serialize<SendInfo>(new()
         {
-            MessageType = "OtherPlayers",
+            MessageType = MessageType.OtherPlayers,
             Content = otherPlayers
         });
 

@@ -1,12 +1,12 @@
 using System.Text.Json.Serialization;
 
-public class SnakeProperties
+public class PlayerProperties
 {
     [JsonPropertyName("x"), JsonInclude]
-    public int X { get; set; }
+    public float X { get; set; }
 
     [JsonPropertyName("y"), JsonInclude]
-    public int Y { get; set; }
+    public float Y { get; set; }
 
     [JsonPropertyName("size"), JsonInclude]
     public int Size { get; set; }

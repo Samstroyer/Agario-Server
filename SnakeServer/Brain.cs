@@ -4,7 +4,7 @@ using System.Net;
 public class Brain
 {
     public static bool listLock = false;
-    public static Dictionary<string, SnakeProperties> playerDict = new();
+    public static Dictionary<string, PlayerProperties> playerDict = new();
 
     WebSocketServer wssv;
 
@@ -16,7 +16,7 @@ public class Brain
         // Console.WriteLine("Attempting to open on: ws://" + ip + ":3000");
         // wssv = new("ws://" + ip + ":3000");
 
-        wssv = new("ws://10.151.173.27:3000");
+        wssv = new("ws://192.168.10.240:3000");
         Console.WriteLine("Opening on " + wssv.Address);
         wssv.AddWebSocketService<Trafficker>("/snake");
 
@@ -26,10 +26,6 @@ public class Brain
         }
 
         wssv.Start();
-
-
-
-
     }
 
     public void Start()
