@@ -20,7 +20,7 @@ public class Brain
         Console.WriteLine("Opening on " + wssv.Address);
         wssv.AddWebSocketService<Trafficker>("/snake");
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 200; i++)
         {
             foodPoints.Add(new());
         }
