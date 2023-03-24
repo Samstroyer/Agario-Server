@@ -3,11 +3,11 @@ using System.Text.Json.Serialization;
 public class SnakeProperties
 {
     [JsonPropertyName("x"), JsonInclude]
-    public float X { get; set; }
+    public int X { get; set; }
 
     [JsonPropertyName("y"), JsonInclude]
-    public float Y { get; set; }
+    public int Y { get; set; }
 
-    [JsonPropertyName("body"), JsonInclude]
-    public List<(int X, int Y)> Body { get; set; }
+    [JsonPropertyName("size"), JsonInclude]
+    public int Size { get; set; }
 }

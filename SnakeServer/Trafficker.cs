@@ -1,11 +1,21 @@
 using WebSocketSharp.Server;
 using System.Text.Json;
 using WebSocketSharp;
+using System.Timers;
 
 public class Trafficker : WebSocketBehavior
 {
+    System.Timers.Timer positionSender = new(250)
+    {
+        AutoReset = true,
+        Enabled = true,
+    };
+    bool firstConnection = true;
+
     protected override void OnOpen()
     {
+        if (firstConnection) positionSender.Elapsed += BroadcastPositions;
+
         string foodJson = JsonSerializer.Serialize<List<Food>>(Brain.foodPoints);
 
         string packet = JsonSerializer.Serialize<SendInfo>(new()
@@ -29,12 +39,14 @@ public class Trafficker : WebSocketBehavior
         switch (type)
         {
             case "ate":
-                // Well, the food handler is called chef sometimes
                 Chef(content);
                 break;
+
             case "position":
                 string pcID = packet.ID;
 
+                while (Brain.listLock) ;
+                Brain.listLock = true;
                 if (Brain.playerDict.ContainsKey(pcID))
                 {
                     Brain.playerDict[pcID] = JsonSerializer.Deserialize<SnakeProperties>(content);
@@ -43,7 +55,10 @@ public class Trafficker : WebSocketBehavior
                 {
                     Brain.playerDict.Add(pcID, JsonSerializer.Deserialize<SnakeProperties>(content));
                 }
+                Brain.listLock = false;
+                Console.WriteLine("Player {0} at X:{1}, Y:{2}, Size:{3}", pcID, Brain.playerDict[pcID].X, Brain.playerDict[pcID].Y, Brain.playerDict[pcID].Size);
                 break;
+
             default:
                 Console.WriteLine("Received unknown message type: " + packet.MessageType);
                 Console.WriteLine("Content: " + packet.Content);
@@ -77,7 +92,25 @@ public class Trafficker : WebSocketBehavior
 
         Sessions.Broadcast(foodUpdate);
         Console.WriteLine("Updated foodpoints: " + foodUpdate);
+    }
 
-        // Console.WriteLine("Updated foodpoints to clients!");
+    public void BroadcastPositions(Object sender, ElapsedEventArgs e)
+    {
+        while (Brain.listLock) ;
+        Brain.listLock = true;
+
+        string otherPlayers = JsonSerializer.Serialize<Dictionary<string, SnakeProperties>>(Brain.playerDict);
+        string playerUpdate = JsonSerializer.Serialize<SendInfo>(new()
+        {
+            MessageType = "OtherPlayers",
+            Content = otherPlayers
+        });
+
+        Console.WriteLine("Amount of players:{0}", Brain.playerDict.Count);
+
+        Sessions.Broadcast(playerUpdate);
+        Console.WriteLine(playerUpdate);
+
+        Brain.listLock = false;
     }
 }
