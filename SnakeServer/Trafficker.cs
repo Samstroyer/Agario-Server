@@ -5,7 +5,7 @@ using System.Timers;
 
 public class Trafficker : WebSocketBehavior
 {
-    System.Timers.Timer positionSender = new(250)
+    System.Timers.Timer positionSender = new(100)
     {
         AutoReset = true,
         Enabled = true,
