@@ -5,7 +5,7 @@ using System.Timers;
 
 public class Trafficker : WebSocketBehavior
 {
-    System.Timers.Timer positionSender = new(100)
+    System.Timers.Timer positionSender = new(16)
     {
         AutoReset = true,
         Enabled = true,
@@ -119,10 +119,10 @@ public class Trafficker : WebSocketBehavior
             Content = otherPlayers
         });
 
-        Console.WriteLine("Amount of players:{0}", Brain.playerDict.Count);
+        // Console.WriteLine("Amount of players:{0}", Brain.playerDict.Count);
 
         Sessions.Broadcast(playerUpdate);
-        Console.WriteLine(playerUpdate);
+        // Console.WriteLine(playerUpdate);
 
         Brain.listLock = false;
     }
