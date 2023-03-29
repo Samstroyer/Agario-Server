@@ -7,6 +7,7 @@ public enum MessageType
     OtherPlayers = 2,
     Food = 3,
     GetFood = 4,
+    Battle = 5,
     Close = 1001
 }
 

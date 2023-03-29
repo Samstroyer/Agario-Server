@@ -1,7 +1,9 @@
 using WebSocketSharp.Server;
 using System.Text.Json;
+using System.Numerics;
 using WebSocketSharp;
 using System.Timers;
+using Raylib_cs;
 
 public class Trafficker : WebSocketBehavior
 {
@@ -119,11 +121,28 @@ public class Trafficker : WebSocketBehavior
             Content = otherPlayers
         });
 
-        // Console.WriteLine("Amount of players:{0}", Brain.playerDict.Count);
-
+        CheckPositions();
         Sessions.Broadcast(playerUpdate);
-        // Console.WriteLine(playerUpdate);
 
         Brain.listLock = false;
+    }
+
+    private void CheckPositions()
+    {
+        foreach (var main in Brain.playerDict)
+        {
+            foreach (var other in Brain.playerDict)
+            {
+                if (main.Key == other.Key) continue;
+                if (main.Value.Size <= other.Value.Size + 10) continue;
+
+                Vector2 point = new(other.Value.X, other.Value.Y);
+
+                if (Raylib.CheckCollisionPointCircle(point, new(main.Value.X, main.Value.Y), main.Value.Size))
+                {
+                    Sessions.Broadcast(other.Key);
+                }
+            }
+        }
     }
 }

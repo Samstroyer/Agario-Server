@@ -16,7 +16,7 @@ public class Brain
         // Console.WriteLine("Attempting to open on: ws://" + ip + ":3000");
         // wssv = new("ws://" + ip + ":3000");
 
-        wssv = new("ws://10.151.171.246:3000");
+        wssv = new("ws://192.168.10.240:3000");
         Console.WriteLine("Opening on " + wssv.Address);
         wssv.AddWebSocketService<Trafficker>("/snake");
 

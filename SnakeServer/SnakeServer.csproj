@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Raylib-cs" Version="4.2.0.2" />
     <PackageReference Include="websocketsharp.core" Version="1.0.0" />
   </ItemGroup>
 
