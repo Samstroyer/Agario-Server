@@ -35,6 +35,12 @@ public class Trafficker : WebSocketBehavior
     {
         SendInfo packet = JsonSerializer.Deserialize<SendInfo>(e.Data);
 
+        if (packet.ID == "Spectator")
+        {
+            Spectator(packet);
+            return;
+        }
+
         string content = packet.Content;
 
         switch (packet.MessageType)
@@ -81,6 +87,31 @@ public class Trafficker : WebSocketBehavior
         }
     }
 
+    private void Spectator(SendInfo packet)
+    {
+        string req = packet.Content;
+
+        switch (req)
+        {
+            case "GetFood":
+                string foodJson = JsonSerializer.Serialize<List<Food>>(Brain.foodPoints);
+
+                string sendData = JsonSerializer.Serialize<SendInfo>(new()
+                {
+                    MessageType = MessageType.GetFood,
+                    Content = foodJson
+
+                });
+                Send(sendData);
+                break;
+
+            default:
+                Console.WriteLine("Unknown spectator request!");
+                Console.WriteLine("Request: " + req);
+                break;
+        }
+    }
+
     private void Chef(string content)
     {
         List<FoodUpdate> newFood = new();
@@ -88,7 +119,7 @@ public class Trafficker : WebSocketBehavior
         List<int> eatenIndexList = JsonSerializer.Deserialize<List<int>>(content);
         foreach (int i in eatenIndexList)
         {
-            Brain.foodPoints[i] = new();
+            Brain.foodPoints[i] = new(-1000, 1000);
 
             FoodUpdate f = new()
             {

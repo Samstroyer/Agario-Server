@@ -11,9 +11,9 @@ public class Food
     [JsonIgnore]
     Random r = new();
 
-    public Food()
+    public Food(int min, int max)
     {
-        X = r.Next(-1000, 1000);
-        Y = r.Next(-1000, 1000);
+        X = r.Next(min, max);
+        Y = r.Next(min, max);
     }
 }

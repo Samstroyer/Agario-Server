@@ -22,7 +22,7 @@ public class Brain
 
         for (int i = 0; i < 200; i++)
         {
-            foodPoints.Add(new());
+            foodPoints.Add(new(-1000, 1000));
         }
 
         wssv.Start();
