@@ -158,6 +158,7 @@ public class Trafficker : WebSocketBehavior
         Brain.listLock = false;
     }
 
+    // Collision - AKA Eating others
     private void CheckPositions()
     {
         foreach (var main in Brain.playerDict)
@@ -171,7 +172,12 @@ public class Trafficker : WebSocketBehavior
 
                 if (Raylib.CheckCollisionPointCircle(point, new(main.Value.X, main.Value.Y), main.Value.Size))
                 {
-                    Sessions.Broadcast(other.Key);
+                    string data = JsonSerializer.Serialize<SendInfo>(new()
+                    {
+                        Content = other.Key,
+                        MessageType = MessageType.Battle
+                    });
+                    Sessions.Broadcast(data);
                 }
             }
         }
